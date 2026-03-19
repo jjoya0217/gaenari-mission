@@ -11,7 +11,6 @@
   --yellow1: #FFE033;
   --yellow2: #FFB300;
   --brown:   #5D4037;
-  --brown2:  #795548;
   --green1:  #88CC66;
   --green2:  #5DAA50;
   --sky:     #87CEEB;
@@ -22,20 +21,20 @@
 body {
   font-family: 'Nanum Round Square', 'Malgun Gothic', sans-serif;
   min-height: 100vh;
-  background: linear-gradient(180deg, var(--sky) 0%, #C5E8FF 58%, var(--green1) 58%, var(--green2) 100%);
+  background: linear-gradient(175deg, var(--sky) 0%, #D0EEFF 58%, var(--green1) 58%, var(--green2) 100%);
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
 }
 
-/* ─────────── 헤더 ─────────── */
+/* ─── 헤더 ─── */
 .header {
   background: linear-gradient(135deg, var(--yellow1) 0%, var(--yellow2) 100%);
   padding: 10px 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 0 3px 14px rgba(0,0,0,0.18);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
   border-bottom: 3px solid #FF8F00;
   flex-shrink: 0;
   flex-wrap: wrap;
@@ -49,65 +48,73 @@ body {
 }
 
 .header-stat {
-  font-size: 1rem;
+  font-size: 1.05rem;
   font-weight: 700;
   color: var(--brown);
-  background: rgba(255,255,255,0.55);
-  padding: 5px 14px;
+  background: rgba(255,255,255,0.6);
+  padding: 5px 16px;
   border-radius: 20px;
 }
 
-/* ─────────── SVG 정원 ─────────── */
-.garden-wrap {
-  width: 100%;
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 4px 8px 0;
-  flex-shrink: 0;
+/* ─── ★ 핵심 단계 표시 영역 ─── */
+.stage-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 16px 4px;
+  min-height: 38vh;
+  position: relative;
 }
 
-#garden {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
-/* 꽃 — 기본 숨김 → 'bloomed' 클래스로 나타남 */
-.ff {
-  opacity: 0;
-  transform-box: fill-box;
-  transform-origin: 50% 100%;
-  transition: opacity 0.9s ease, transform 0.9s ease;
-  transform: scale(0.2);
-}
-.ff.bloomed {
-  opacity: 1;
-  transform: scale(1);
-}
-
-/* 구름 부유 애니메이션 */
-.cloud-group { animation: cloudDrift 24s linear infinite; }
-.cloud-group2 { animation: cloudDrift 32s linear infinite; animation-delay: -14s; }
-@keyframes cloudDrift {
-  from { transform: translateX(-180px); opacity: 0; }
-  8%   { opacity: 1; }
-  92%  { opacity: 1; }
-  to   { transform: translateX(1000px); opacity: 0; }
-}
-
-/* ─────────── 단계 레이블 ─────────── */
-.stage-label {
-  text-align: center;
-  font-size: 1.3rem;
+/* 단계 텍스트 — 상단 가운데 */
+.stage-text {
+  font-size: clamp(1.5rem, 4.5vw, 2.6rem);
   font-weight: 800;
   color: var(--brown);
-  padding: 6px 0 4px;
-  text-shadow: 1px 1px 4px rgba(255,255,255,0.7);
-  min-height: 2rem;
-  flex-shrink: 0;
+  text-align: center;
+  text-shadow: 0 2px 12px rgba(255,255,255,0.95), 0 0 40px rgba(255,224,0,0.4);
+  letter-spacing: -0.5px;
+  margin-bottom: 6px;
+  line-height: 1.2;
+  min-height: 3rem;
 }
 
-/* ─────────── 진행률 바 ─────────── */
+/* 단계 이모지 — 중앙에 매우 크게 */
+.stage-emoji {
+  font-size: clamp(160px, 30vw, 280px);
+  line-height: 1;
+  text-align: center;
+  display: block;
+  filter: drop-shadow(0 12px 32px rgba(0,0,0,0.22))
+          drop-shadow(0 0 60px rgba(255,220,0,0.35));
+  user-select: none;
+  cursor: default;
+  transition: filter 0.4s;
+}
+
+/* 단계 전환 팝 애니메이션 */
+@keyframes stagePop {
+  0%   { transform: scale(0.3) rotate(-15deg); opacity: 0;  filter: blur(8px); }
+  55%  { transform: scale(1.18) rotate(6deg);  opacity: 1;  filter: blur(0); }
+  78%  { transform: scale(0.95) rotate(-3deg); }
+  100% { transform: scale(1) rotate(0deg);     opacity: 1;  }
+}
+.stage-emoji.pop {
+  animation: stagePop 0.7s cubic-bezier(.22,1.4,.64,1) forwards;
+}
+
+/* 살짝 두둥실 기본 움직임 */
+@keyframes emojiFloat {
+  0%,100% { transform: translateY(0) rotate(-1deg); }
+  50%     { transform: translateY(-14px) rotate(1deg); }
+}
+.stage-emoji.float {
+  animation: emojiFloat 3s ease-in-out infinite;
+}
+
+/* ─── 진행률 바 ─── */
 .progress-wrap {
   width: 100%;
   max-width: 960px;
@@ -126,34 +133,34 @@ body {
 }
 
 .progress-bg {
-  background: rgba(255,255,255,0.55);
+  background: rgba(255,255,255,0.6);
   border-radius: 30px;
-  height: 26px;
+  height: 30px;
   overflow: hidden;
-  box-shadow: inset 0 2px 6px rgba(0,0,0,0.12);
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.14);
 }
 
 .progress-fill {
   height: 100%;
   width: 0%;
-  background: linear-gradient(90deg, var(--yellow1), var(--yellow2));
+  background: linear-gradient(90deg, var(--yellow1) 0%, var(--yellow2) 60%, #FF8F00 100%);
   border-radius: 30px;
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  padding-right: 10px;
-  font-size: 0.85rem;
+  padding-right: 12px;
+  font-size: 0.9rem;
   font-weight: 800;
   color: var(--brown);
-  transition: width 0.9s ease;
-  min-width: 36px;
+  transition: width 1s ease;
+  min-width: 48px;
 }
 
-/* ─────────── 모둠 카드 ─────────── */
+/* ─── 모둠 카드 ─── */
 .groups-wrap {
   width: 100%;
   max-width: 960px;
-  margin: 4px auto;
+  margin: 6px auto 0;
   padding: 0 12px;
   display: grid;
   grid-template-columns: repeat(6, 1fr);
@@ -162,65 +169,49 @@ body {
 }
 
 .group-card {
-  background: rgba(255,255,255,0.92);
+  background: rgba(255,255,255,0.93);
   border-radius: 18px;
-  padding: 8px 4px;
+  padding: 10px 4px;
   text-align: center;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 3px 12px rgba(0,0,0,0.12);
   border: 2px solid var(--yellow1);
-  transition: transform 0.25s, border-color 0.25s;
+  transition: border-color 0.2s;
 }
 
 .group-card.active-pulse {
-  animation: cardPulse 0.4s ease;
-  border-color: var(--yellow2);
+  animation: cardPulse 0.45s ease;
+  border-color: #FF8F00;
 }
 
 @keyframes cardPulse {
   0%   { transform: scale(1); }
-  50%  { transform: scale(1.08); }
+  50%  { transform: scale(1.12); }
   100% { transform: scale(1); }
 }
 
-.gname {
-  font-size: 0.78rem;
-  font-weight: 800;
-  color: var(--brown);
-  margin-bottom: 2px;
-}
+.gname  { font-size: 0.8rem;  font-weight: 800; color: var(--brown); margin-bottom: 2px; }
+.gcount { font-size: 1.9rem;  font-weight: 800; color: #FF8F00; line-height: 1; }
+.gunit  { font-size: 0.7rem;  color: #aaa; margin-top: 2px; }
 
-.gcount {
-  font-size: 1.7rem;
-  font-weight: 800;
-  color: #FF8F00;
-  line-height: 1;
-}
-
-.gunit {
-  font-size: 0.68rem;
-  color: #999;
-  margin-top: 2px;
-}
-
-/* ─────────── 설정 패널 ─────────── */
+/* ─── 설정 패널 ─── */
 .settings-wrap {
   width: 100%;
   max-width: 960px;
-  margin: 4px auto 8px;
+  margin: 6px auto 10px;
   padding: 0 12px;
   flex-shrink: 0;
 }
 
 .settings-inner {
-  background: rgba(255,255,255,0.88);
+  background: rgba(255,255,255,0.9);
   border-radius: 22px;
-  padding: 10px 18px;
+  padding: 10px 20px;
   display: flex;
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
   justify-content: center;
-  box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 3px 14px rgba(0,0,0,0.1);
 }
 
 .settings-inner label {
@@ -231,7 +222,7 @@ body {
 
 .settings-inner input[type=number] {
   width: 72px;
-  padding: 6px 8px;
+  padding: 7px 8px;
   border: 2px solid var(--yellow2);
   border-radius: 12px;
   font-size: 1rem;
@@ -243,11 +234,11 @@ body {
 
 .settings-inner input:focus {
   border-color: #FF8F00;
-  box-shadow: 0 0 0 3px rgba(255,179,0,0.2);
+  box-shadow: 0 0 0 3px rgba(255,179,0,0.22);
 }
 
 .btn {
-  padding: 8px 16px;
+  padding: 9px 18px;
   border: none;
   border-radius: 14px;
   font-size: 0.95rem;
@@ -256,59 +247,54 @@ body {
   font-family: inherit;
   transition: transform 0.15s, box-shadow 0.15s;
 }
-
-.btn:hover { transform: translateY(-2px); box-shadow: 0 5px 14px rgba(0,0,0,0.2); }
+.btn:hover  { transform: translateY(-2px); box-shadow: 0 5px 16px rgba(0,0,0,0.2); }
 .btn:active { transform: translateY(0); }
-
 .btn-set   { background: linear-gradient(135deg, #FFB300, #FFD740); color: var(--brown); }
 .btn-reset { background: linear-gradient(135deg, #FF7043, #FF8A65); color: white; }
 .btn-start { background: linear-gradient(135deg, #43A047, #66BB6A); color: white; }
 
-/* ─────────── 축하 오버레이 ─────────── */
+/* ─── 축하 오버레이 ─── */
 #celebration {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(255,224,0,0.75);
-  backdrop-filter: blur(6px);
+  background: rgba(255,228,0,0.8);
+  backdrop-filter: blur(8px);
   z-index: 200;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   cursor: pointer;
 }
-
 #celebration.show { display: flex; }
 
 .cel-emoji {
-  font-size: 7rem;
-  animation: spin 2.5s linear infinite;
-  filter: drop-shadow(0 0 20px rgba(255,200,0,0.9));
+  font-size: min(22vw, 200px);
+  line-height: 1;
   margin-bottom: 16px;
+  filter: drop-shadow(0 0 30px rgba(255,200,0,0.9));
+  animation: celBounce 1s ease-in-out infinite alternate;
+}
+@keyframes celBounce {
+  from { transform: scale(1) rotate(-6deg); }
+  to   { transform: scale(1.12) rotate(6deg); }
 }
 
-@keyframes spin { to { transform: rotate(360deg); } }
-
 .cel-msg {
-  font-size: 2.6rem;
+  font-size: clamp(2rem, 5.5vw, 3.4rem);
   font-weight: 800;
   color: var(--brown);
   text-align: center;
-  text-shadow: 2px 3px 10px rgba(255,255,255,0.8);
-  animation: msgBounce 0.6s ease-in-out infinite alternate;
+  text-shadow: 2px 4px 12px rgba(255,255,255,0.8);
   line-height: 1.3;
 }
 
-@keyframes msgBounce {
-  from { transform: scale(1); }
-  to   { transform: scale(1.06); }
-}
-
 .cel-sub {
-  font-size: 1.1rem;
-  color: var(--brown2);
-  margin-top: 18px;
+  font-size: 1rem;
+  color: var(--brown);
+  margin-top: 22px;
   font-weight: 700;
+  opacity: 0.75;
 }
 
 /* 꽃잎 파티클 */
@@ -318,10 +304,9 @@ body {
   pointer-events: none;
   animation: petalFall var(--dur) linear forwards;
 }
-
 @keyframes petalFall {
-  0%   { transform: translateY(-40px) rotate(0deg); opacity: 1; }
-  100% { transform: translateY(105vh) rotate(var(--rot)); opacity: 0; }
+  0%   { transform: translateY(-40px) rotate(0deg);       opacity: 1; }
+  100% { transform: translateY(110vh) rotate(var(--rot)); opacity: 0; }
 }
 </style>
 </head>
@@ -331,459 +316,17 @@ body {
 <div class="header">
   <h1>🌼 개나리 꽃피우기</h1>
   <div class="header-stat">
-    목표 <span id="hGoal">60</span>번 &nbsp;|&nbsp;
-    현재 <span id="hTotal">0</span>번
+    목표 <span id="hGoal">60</span>번 &nbsp;|&nbsp; 현재 <span id="hTotal">0</span>번
   </div>
 </div>
 
-<!-- ─── SVG 정원 ─── -->
-<div class="garden-wrap">
-<svg id="garden" viewBox="0 0 960 400" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="skyG" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%"   stop-color="#87CEEB"/>
-      <stop offset="100%" stop-color="#D0EEFF"/>
-    </linearGradient>
-    <linearGradient id="groundG" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%"   stop-color="#8ED468"/>
-      <stop offset="100%" stop-color="#5DAA50"/>
-    </linearGradient>
-    <radialGradient id="sunG" cx="50%" cy="50%" r="50%">
-      <stop offset="0%"   stop-color="#FFFDE7"/>
-      <stop offset="65%"  stop-color="#FFD740"/>
-      <stop offset="100%" stop-color="#FFB300"/>
-    </radialGradient>
-    <filter id="glow">
-      <feGaussianBlur stdDeviation="4" result="blur"/>
-      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-    </filter>
-    <filter id="softShadow">
-      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity="0.25"/>
-    </filter>
-  </defs>
+<!-- ★★★ 단계 표시 — 텍스트 상단 + 이모지 중앙 크게 ★★★ -->
+<div class="stage-area">
+  <!-- 단계 텍스트: 가운데 상단 -->
+  <div class="stage-text" id="stageText">새싹이 돋아나고 있어요...</div>
 
-  <!-- 하늘 -->
-  <rect width="960" height="400" fill="url(#skyG)"/>
-
-  <!-- 태양 -->
-  <circle cx="870" cy="72" r="52" fill="url(#sunG)" filter="url(#glow)"/>
-  <g stroke="#FFD740" stroke-width="3.5" opacity="0.65" stroke-linecap="round">
-    <line x1="870" y1="6"   x2="870" y2="0"/>
-    <line x1="913" y1="29"  x2="920" y2="22"/>
-    <line x1="936" y1="72"  x2="944" y2="72"/>
-    <line x1="913" y1="115" x2="920" y2="122"/>
-    <line x1="870" y1="138" x2="870" y2="146"/>
-    <line x1="827" y1="115" x2="820" y2="122"/>
-    <line x1="804" y1="72"  x2="796" y2="72"/>
-    <line x1="827" y1="29"  x2="820" y2="22"/>
-  </g>
-
-  <!-- 구름 1 -->
-  <g class="cloud-group" transform="translate(0,0)">
-    <ellipse cx="130" cy="65" rx="62" ry="28" fill="white" opacity="0.92"/>
-    <ellipse cx="172" cy="58" rx="46" ry="32" fill="white" opacity="0.92"/>
-    <ellipse cx="100" cy="70" rx="38" ry="22" fill="white" opacity="0.92"/>
-  </g>
-
-  <!-- 구름 2 -->
-  <g class="cloud-group2" transform="translate(0,0)">
-    <ellipse cx="500" cy="50" rx="68" ry="26" fill="white" opacity="0.85"/>
-    <ellipse cx="548" cy="44" rx="50" ry="30" fill="white" opacity="0.85"/>
-    <ellipse cx="468" cy="56" rx="42" ry="22" fill="white" opacity="0.85"/>
-  </g>
-
-  <!-- 땅 -->
-  <rect y="330" width="960" height="70" fill="url(#groundG)"/>
-  <ellipse cx="480" cy="330" rx="510" ry="28" fill="#8ED468"/>
-
-  <!-- 풀잎 장식 -->
-  <g fill="#66BB6A" opacity="0.9">
-    <path d="M30 330 Q35 310 40 330 Z"/>
-    <path d="M38 330 Q45 308 50 330 Z"/>
-    <path d="M180 328 Q186 307 192 328 Z"/>
-    <path d="M380 330 Q385 310 392 330 Z"/>
-    <path d="M570 328 Q577 308 582 328 Z"/>
-    <path d="M750 330 Q756 310 762 330 Z"/>
-    <path d="M900 328 Q907 307 913 328 Z"/>
-  </g>
-  <!-- 땅 위 작은 꽃 (장식) -->
-  <g opacity="0.7">
-    <circle cx="55"  cy="325" r="4.5" fill="#FF80AB"/>
-    <circle cx="220" cy="323" r="4"   fill="#FF80AB"/>
-    <circle cx="350" cy="326" r="3.5" fill="#FFAB40"/>
-    <circle cx="600" cy="323" r="4"   fill="#FF80AB"/>
-    <circle cx="810" cy="325" r="4.5" fill="#FFAB40"/>
-  </g>
-
-  <!-- ══════════════════════════════════════
-       개나리 가지 (3개 덤불)
-  ══════════════════════════════════════ -->
-
-  <!-- 덤불 L (왼쪽, base ~x=155, y=355) -->
-  <g fill="none" stroke="#7B5533" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M155 355 C152 320 144 285 138 252" stroke-width="7"/>
-    <path d="M140 265 C125 242 104 222 80 202"  stroke-width="4.5"/>
-    <path d="M140 272 C130 255 118 238 108 220"  stroke-width="4"/>
-    <path d="M138 252 C140 234 143 218 145 202"  stroke-width="3.5"/>
-    <path d="M155 355 C162 320 174 288 182 262"  stroke-width="6"/>
-    <path d="M180 268 C187 250 196 233 206 218"  stroke-width="4"/>
-    <path d="M182 262 C192 248 206 236 218 226"  stroke-width="3.5"/>
-    <path d="M155 355 C148 335 138 305 130 280"  stroke-width="4.5"/>
-    <path d="M130 280 C118 262 100 246 82 232"   stroke-width="3.5"/>
-  </g>
-
-  <!-- 덤불 C (중앙, base ~x=470, y=360) -->
-  <g fill="none" stroke="#7B5533" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M470 360 C467 318 460 278 455 238" stroke-width="8"/>
-    <path d="M458 255 C440 230 416 208 390 190"  stroke-width="5"/>
-    <path d="M458 260 C447 242 435 224 424 208"  stroke-width="4.5"/>
-    <path d="M457 246 C454 228 452 210 450 193"  stroke-width="4"/>
-    <path d="M455 238 C458 220 463 202 468 186"  stroke-width="3.5"/>
-    <path d="M457 250 C465 232 476 215 488 200"  stroke-width="4"/>
-    <path d="M458 255 C470 237 486 220 502 206"  stroke-width="4.5"/>
-    <path d="M470 360 C480 318 492 280 500 248"  stroke-width="7"/>
-    <path d="M498 255 C510 234 526 215 544 200"  stroke-width="5"/>
-    <path d="M500 248 C514 232 530 218 548 208"  stroke-width="4"/>
-    <path d="M470 360 C457 330 440 295 425 265"  stroke-width="5.5"/>
-    <path d="M425 270 C410 250 390 235 368 222"  stroke-width="4"/>
-  </g>
-
-  <!-- 덤불 R (오른쪽, base ~x=778, y=355) -->
-  <g fill="none" stroke="#7B5533" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M778 355 C780 320 784 285 786 252"  stroke-width="7"/>
-    <path d="M784 265 C798 242 818 222 840 202"  stroke-width="4.5"/>
-    <path d="M784 272 C794 255 808 238 820 220"  stroke-width="4"/>
-    <path d="M786 252 C786 234 786 215 787 200"  stroke-width="3.5"/>
-    <path d="M778 355 C770 320 760 288 752 262"  stroke-width="6"/>
-    <path d="M754 268 C742 250 728 234 714 220"  stroke-width="4"/>
-    <path d="M752 262 C740 248 724 236 710 226"  stroke-width="3.5"/>
-    <path d="M778 355 C784 330 792 298 800 272"  stroke-width="4.5"/>
-    <path d="M800 272 C812 254 828 238 848 224"  stroke-width="3.5"/>
-  </g>
-
-  <!-- ══════════════════════════════════════
-       개나리 꽃 42송이 (순서대로 피어남)
-       각 꽃: <g class="ff"> + 4개 타원 꽃잎 + 중심원
-       transform="translate(x,y)" 로 위치 설정
-  ══════════════════════════════════════ -->
-
-  <!-- ── 덤불 L 꽃 (14송이) ── -->
-  <g id="bush-L">
-    <g class="ff" transform="translate(80,202)">
-      <ellipse rx="8" ry="15" fill="#FFE033" transform="rotate(0)   translate(0,-10)"/>
-      <ellipse rx="8" ry="15" fill="#FFE033" transform="rotate(90)  translate(0,-10)"/>
-      <ellipse rx="8" ry="15" fill="#FFE033" transform="rotate(180) translate(0,-10)"/>
-      <ellipse rx="8" ry="15" fill="#FFE033" transform="rotate(270) translate(0,-10)"/>
-      <circle r="5" fill="#FFA000"/>
-    </g>
-    <g class="ff" transform="translate(108,220)">
-      <ellipse rx="7.5" ry="14" fill="#FFD700" transform="rotate(12)  translate(0,-9.5)"/>
-      <ellipse rx="7.5" ry="14" fill="#FFD700" transform="rotate(102) translate(0,-9.5)"/>
-      <ellipse rx="7.5" ry="14" fill="#FFD700" transform="rotate(192) translate(0,-9.5)"/>
-      <ellipse rx="7.5" ry="14" fill="#FFD700" transform="rotate(282) translate(0,-9.5)"/>
-      <circle r="4.5" fill="#FFB300"/>
-    </g>
-    <g class="ff" transform="translate(82,232)">
-      <ellipse rx="7" ry="13" fill="#FFE500" transform="rotate(-15) translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFE500" transform="rotate(75)  translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFE500" transform="rotate(165) translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFE500" transform="rotate(255) translate(0,-9)"/>
-      <circle r="4.5" fill="#FFA000"/>
-    </g>
-    <g class="ff" transform="translate(140,202)">
-      <ellipse rx="7.5" ry="14" fill="#FFE033" transform="rotate(8)   translate(0,-9.5)"/>
-      <ellipse rx="7.5" ry="14" fill="#FFE033" transform="rotate(98)  translate(0,-9.5)"/>
-      <ellipse rx="7.5" ry="14" fill="#FFE033" transform="rotate(188) translate(0,-9.5)"/>
-      <ellipse rx="7.5" ry="14" fill="#FFE033" transform="rotate(278) translate(0,-9.5)"/>
-      <circle r="4.5" fill="#FF8F00"/>
-    </g>
-    <g class="ff" transform="translate(120,218)">
-      <ellipse rx="7" ry="13" fill="#FFD700" transform="rotate(-8)  translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFD700" transform="rotate(82)  translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFD700" transform="rotate(172) translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFD700" transform="rotate(262) translate(0,-9)"/>
-      <circle r="4.5" fill="#FFB300"/>
-    </g>
-    <g class="ff" transform="translate(145,216)">
-      <ellipse rx="7" ry="13" fill="#FFE500" transform="rotate(20)  translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFE500" transform="rotate(110) translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFE500" transform="rotate(200) translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFE500" transform="rotate(290) translate(0,-9)"/>
-      <circle r="4.5" fill="#FFA000"/>
-    </g>
-    <g class="ff" transform="translate(206,218)">
-      <ellipse rx="7" ry="13" fill="#FFE033" transform="rotate(-12) translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFE033" transform="rotate(78)  translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFE033" transform="rotate(168) translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFE033" transform="rotate(258) translate(0,-9)"/>
-      <circle r="4.5" fill="#FF8F00"/>
-    </g>
-    <g class="ff" transform="translate(218,226)">
-      <ellipse rx="6.5" ry="12" fill="#FFD700" transform="rotate(5)   translate(0,-8.5)"/>
-      <ellipse rx="6.5" ry="12" fill="#FFD700" transform="rotate(95)  translate(0,-8.5)"/>
-      <ellipse rx="6.5" ry="12" fill="#FFD700" transform="rotate(185) translate(0,-8.5)"/>
-      <ellipse rx="6.5" ry="12" fill="#FFD700" transform="rotate(275) translate(0,-8.5)"/>
-      <circle r="4" fill="#FFB300"/>
-    </g>
-    <g class="ff" transform="translate(192,230)">
-      <ellipse rx="7" ry="13" fill="#FFE500" transform="rotate(-18) translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFE500" transform="rotate(72)  translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFE500" transform="rotate(162) translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFE500" transform="rotate(252) translate(0,-9)"/>
-      <circle r="4.5" fill="#FFA000"/>
-    </g>
-    <g class="ff" transform="translate(164,234)">
-      <ellipse rx="7.5" ry="14" fill="#FFE033" transform="rotate(10)  translate(0,-9.5)"/>
-      <ellipse rx="7.5" ry="14" fill="#FFE033" transform="rotate(100) translate(0,-9.5)"/>
-      <ellipse rx="7.5" ry="14" fill="#FFE033" transform="rotate(190) translate(0,-9.5)"/>
-      <ellipse rx="7.5" ry="14" fill="#FFE033" transform="rotate(280) translate(0,-9.5)"/>
-      <circle r="5" fill="#FF8F00"/>
-    </g>
-    <g class="ff" transform="translate(130,244)">
-      <ellipse rx="7" ry="13" fill="#FFD700" transform="rotate(-5)  translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFD700" transform="rotate(85)  translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFD700" transform="rotate(175) translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFD700" transform="rotate(265) translate(0,-9)"/>
-      <circle r="4.5" fill="#FFB300"/>
-    </g>
-    <g class="ff" transform="translate(108,240)">
-      <ellipse rx="6.5" ry="12" fill="#FFE500" transform="rotate(15)  translate(0,-8.5)"/>
-      <ellipse rx="6.5" ry="12" fill="#FFE500" transform="rotate(105) translate(0,-8.5)"/>
-      <ellipse rx="6.5" ry="12" fill="#FFE500" transform="rotate(195) translate(0,-8.5)"/>
-      <ellipse rx="6.5" ry="12" fill="#FFE500" transform="rotate(285) translate(0,-8.5)"/>
-      <circle r="4" fill="#FFA000"/>
-    </g>
-    <g class="ff" transform="translate(152,258)">
-      <ellipse rx="7" ry="13" fill="#FFE033" transform="rotate(-20) translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFE033" transform="rotate(70)  translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFE033" transform="rotate(160) translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFE033" transform="rotate(250) translate(0,-9)"/>
-      <circle r="4.5" fill="#FF8F00"/>
-    </g>
-    <g class="ff" transform="translate(175,260)">
-      <ellipse rx="6.5" ry="12" fill="#FFD700" transform="rotate(8)   translate(0,-8.5)"/>
-      <ellipse rx="6.5" ry="12" fill="#FFD700" transform="rotate(98)  translate(0,-8.5)"/>
-      <ellipse rx="6.5" ry="12" fill="#FFD700" transform="rotate(188) translate(0,-8.5)"/>
-      <ellipse rx="6.5" ry="12" fill="#FFD700" transform="rotate(278) translate(0,-8.5)"/>
-      <circle r="4" fill="#FFB300"/>
-    </g>
-  </g>
-
-  <!-- ── 덤불 C 꽃 (14송이) ── -->
-  <g id="bush-C">
-    <g class="ff" transform="translate(390,190)">
-      <ellipse rx="8.5" ry="16" fill="#FFE033" transform="rotate(5)   translate(0,-11)"/>
-      <ellipse rx="8.5" ry="16" fill="#FFE033" transform="rotate(95)  translate(0,-11)"/>
-      <ellipse rx="8.5" ry="16" fill="#FFE033" transform="rotate(185) translate(0,-11)"/>
-      <ellipse rx="8.5" ry="16" fill="#FFE033" transform="rotate(275) translate(0,-11)"/>
-      <circle r="5.5" fill="#FFA000"/>
-    </g>
-    <g class="ff" transform="translate(416,196)">
-      <ellipse rx="8" ry="15" fill="#FFD700" transform="rotate(-8)  translate(0,-10)"/>
-      <ellipse rx="8" ry="15" fill="#FFD700" transform="rotate(82)  translate(0,-10)"/>
-      <ellipse rx="8" ry="15" fill="#FFD700" transform="rotate(172) translate(0,-10)"/>
-      <ellipse rx="8" ry="15" fill="#FFD700" transform="rotate(262) translate(0,-10)"/>
-      <circle r="5" fill="#FFB300"/>
-    </g>
-    <g class="ff" transform="translate(450,193)">
-      <ellipse rx="8" ry="15" fill="#FFE500" transform="rotate(12)  translate(0,-10)"/>
-      <ellipse rx="8" ry="15" fill="#FFE500" transform="rotate(102) translate(0,-10)"/>
-      <ellipse rx="8" ry="15" fill="#FFE500" transform="rotate(192) translate(0,-10)"/>
-      <ellipse rx="8" ry="15" fill="#FFE500" transform="rotate(282) translate(0,-10)"/>
-      <circle r="5" fill="#FFA000"/>
-    </g>
-    <g class="ff" transform="translate(468,186)">
-      <ellipse rx="7.5" ry="14" fill="#FFE033" transform="rotate(-15) translate(0,-9.5)"/>
-      <ellipse rx="7.5" ry="14" fill="#FFE033" transform="rotate(75)  translate(0,-9.5)"/>
-      <ellipse rx="7.5" ry="14" fill="#FFE033" transform="rotate(165) translate(0,-9.5)"/>
-      <ellipse rx="7.5" ry="14" fill="#FFE033" transform="rotate(255) translate(0,-9.5)"/>
-      <circle r="4.5" fill="#FF8F00"/>
-    </g>
-    <g class="ff" transform="translate(424,208)">
-      <ellipse rx="8" ry="15" fill="#FFD700" transform="rotate(8)   translate(0,-10)"/>
-      <ellipse rx="8" ry="15" fill="#FFD700" transform="rotate(98)  translate(0,-10)"/>
-      <ellipse rx="8" ry="15" fill="#FFD700" transform="rotate(188) translate(0,-10)"/>
-      <ellipse rx="8" ry="15" fill="#FFD700" transform="rotate(278) translate(0,-10)"/>
-      <circle r="5" fill="#FFB300"/>
-    </g>
-    <g class="ff" transform="translate(488,200)">
-      <ellipse rx="7.5" ry="14" fill="#FFE500" transform="rotate(-10) translate(0,-9.5)"/>
-      <ellipse rx="7.5" ry="14" fill="#FFE500" transform="rotate(80)  translate(0,-9.5)"/>
-      <ellipse rx="7.5" ry="14" fill="#FFE500" transform="rotate(170) translate(0,-9.5)"/>
-      <ellipse rx="7.5" ry="14" fill="#FFE500" transform="rotate(260) translate(0,-9.5)"/>
-      <circle r="4.5" fill="#FFA000"/>
-    </g>
-    <g class="ff" transform="translate(504,206)">
-      <ellipse rx="7" ry="13" fill="#FFE033" transform="rotate(18)  translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFE033" transform="rotate(108) translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFE033" transform="rotate(198) translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFE033" transform="rotate(288) translate(0,-9)"/>
-      <circle r="4.5" fill="#FF8F00"/>
-    </g>
-    <g class="ff" transform="translate(544,200)">
-      <ellipse rx="7.5" ry="14" fill="#FFD700" transform="rotate(-5)  translate(0,-9.5)"/>
-      <ellipse rx="7.5" ry="14" fill="#FFD700" transform="rotate(85)  translate(0,-9.5)"/>
-      <ellipse rx="7.5" ry="14" fill="#FFD700" transform="rotate(175) translate(0,-9.5)"/>
-      <ellipse rx="7.5" ry="14" fill="#FFD700" transform="rotate(265) translate(0,-9.5)"/>
-      <circle r="4.5" fill="#FFB300"/>
-    </g>
-    <g class="ff" transform="translate(548,208)">
-      <ellipse rx="7" ry="13" fill="#FFE500" transform="rotate(10)  translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFE500" transform="rotate(100) translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFE500" transform="rotate(190) translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFE500" transform="rotate(280) translate(0,-9)"/>
-      <circle r="4.5" fill="#FFA000"/>
-    </g>
-    <g class="ff" transform="translate(450,212)">
-      <ellipse rx="8" ry="15" fill="#FFE033" transform="rotate(-12) translate(0,-10)"/>
-      <ellipse rx="8" ry="15" fill="#FFE033" transform="rotate(78)  translate(0,-10)"/>
-      <ellipse rx="8" ry="15" fill="#FFE033" transform="rotate(168) translate(0,-10)"/>
-      <ellipse rx="8" ry="15" fill="#FFE033" transform="rotate(258) translate(0,-10)"/>
-      <circle r="5" fill="#FF8F00"/>
-    </g>
-    <g class="ff" transform="translate(412,220)">
-      <ellipse rx="7.5" ry="14" fill="#FFD700" transform="rotate(6)   translate(0,-9.5)"/>
-      <ellipse rx="7.5" ry="14" fill="#FFD700" transform="rotate(96)  translate(0,-9.5)"/>
-      <ellipse rx="7.5" ry="14" fill="#FFD700" transform="rotate(186) translate(0,-9.5)"/>
-      <ellipse rx="7.5" ry="14" fill="#FFD700" transform="rotate(276) translate(0,-9.5)"/>
-      <circle r="4.5" fill="#FFB300"/>
-    </g>
-    <g class="ff" transform="translate(368,222)">
-      <ellipse rx="7" ry="13" fill="#FFE500" transform="rotate(-20) translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFE500" transform="rotate(70)  translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFE500" transform="rotate(160) translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFE500" transform="rotate(250) translate(0,-9)"/>
-      <circle r="4.5" fill="#FFA000"/>
-    </g>
-    <g class="ff" transform="translate(484,224)">
-      <ellipse rx="7" ry="13" fill="#FFE033" transform="rotate(15)  translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFE033" transform="rotate(105) translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFE033" transform="rotate(195) translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFE033" transform="rotate(285) translate(0,-9)"/>
-      <circle r="4.5" fill="#FF8F00"/>
-    </g>
-    <g class="ff" transform="translate(425,238)">
-      <ellipse rx="7.5" ry="14" fill="#FFD700" transform="rotate(-8)  translate(0,-9.5)"/>
-      <ellipse rx="7.5" ry="14" fill="#FFD700" transform="rotate(82)  translate(0,-9.5)"/>
-      <ellipse rx="7.5" ry="14" fill="#FFD700" transform="rotate(172) translate(0,-9.5)"/>
-      <ellipse rx="7.5" ry="14" fill="#FFD700" transform="rotate(262) translate(0,-9.5)"/>
-      <circle r="4.5" fill="#FFB300"/>
-    </g>
-  </g>
-
-  <!-- ── 덤불 R 꽃 (14송이) ── -->
-  <g id="bush-R">
-    <g class="ff" transform="translate(840,202)">
-      <ellipse rx="8" ry="15" fill="#FFE033" transform="rotate(-5)  translate(0,-10)"/>
-      <ellipse rx="8" ry="15" fill="#FFE033" transform="rotate(85)  translate(0,-10)"/>
-      <ellipse rx="8" ry="15" fill="#FFE033" transform="rotate(175) translate(0,-10)"/>
-      <ellipse rx="8" ry="15" fill="#FFE033" transform="rotate(265) translate(0,-10)"/>
-      <circle r="5" fill="#FFA000"/>
-    </g>
-    <g class="ff" transform="translate(820,220)">
-      <ellipse rx="7.5" ry="14" fill="#FFD700" transform="rotate(10)  translate(0,-9.5)"/>
-      <ellipse rx="7.5" ry="14" fill="#FFD700" transform="rotate(100) translate(0,-9.5)"/>
-      <ellipse rx="7.5" ry="14" fill="#FFD700" transform="rotate(190) translate(0,-9.5)"/>
-      <ellipse rx="7.5" ry="14" fill="#FFD700" transform="rotate(280) translate(0,-9.5)"/>
-      <circle r="4.5" fill="#FFB300"/>
-    </g>
-    <g class="ff" transform="translate(848,224)">
-      <ellipse rx="7" ry="13" fill="#FFE500" transform="rotate(-15) translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFE500" transform="rotate(75)  translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFE500" transform="rotate(165) translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFE500" transform="rotate(255) translate(0,-9)"/>
-      <circle r="4.5" fill="#FFA000"/>
-    </g>
-    <g class="ff" transform="translate(787,200)">
-      <ellipse rx="7.5" ry="14" fill="#FFE033" transform="rotate(8)   translate(0,-9.5)"/>
-      <ellipse rx="7.5" ry="14" fill="#FFE033" transform="rotate(98)  translate(0,-9.5)"/>
-      <ellipse rx="7.5" ry="14" fill="#FFE033" transform="rotate(188) translate(0,-9.5)"/>
-      <ellipse rx="7.5" ry="14" fill="#FFE033" transform="rotate(278) translate(0,-9.5)"/>
-      <circle r="4.5" fill="#FF8F00"/>
-    </g>
-    <g class="ff" transform="translate(786,216)">
-      <ellipse rx="7" ry="13" fill="#FFD700" transform="rotate(-10) translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFD700" transform="rotate(80)  translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFD700" transform="rotate(170) translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFD700" transform="rotate(260) translate(0,-9)"/>
-      <circle r="4.5" fill="#FFB300"/>
-    </g>
-    <g class="ff" transform="translate(714,220)">
-      <ellipse rx="7.5" ry="14" fill="#FFE500" transform="rotate(18)  translate(0,-9.5)"/>
-      <ellipse rx="7.5" ry="14" fill="#FFE500" transform="rotate(108) translate(0,-9.5)"/>
-      <ellipse rx="7.5" ry="14" fill="#FFE500" transform="rotate(198) translate(0,-9.5)"/>
-      <ellipse rx="7.5" ry="14" fill="#FFE500" transform="rotate(288) translate(0,-9.5)"/>
-      <circle r="4.5" fill="#FFA000"/>
-    </g>
-    <g class="ff" transform="translate(710,226)">
-      <ellipse rx="7" ry="13" fill="#FFE033" transform="rotate(-12) translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFE033" transform="rotate(78)  translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFE033" transform="rotate(168) translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFE033" transform="rotate(258) translate(0,-9)"/>
-      <circle r="4.5" fill="#FF8F00"/>
-    </g>
-    <g class="ff" transform="translate(752,232)">
-      <ellipse rx="8" ry="15" fill="#FFD700" transform="rotate(5)   translate(0,-10)"/>
-      <ellipse rx="8" ry="15" fill="#FFD700" transform="rotate(95)  translate(0,-10)"/>
-      <ellipse rx="8" ry="15" fill="#FFD700" transform="rotate(185) translate(0,-10)"/>
-      <ellipse rx="8" ry="15" fill="#FFD700" transform="rotate(275) translate(0,-10)"/>
-      <circle r="5" fill="#FFB300"/>
-    </g>
-    <g class="ff" transform="translate(814,234)">
-      <ellipse rx="7" ry="13" fill="#FFE500" transform="rotate(-18) translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFE500" transform="rotate(72)  translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFE500" transform="rotate(162) translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFE500" transform="rotate(252) translate(0,-9)"/>
-      <circle r="4.5" fill="#FFA000"/>
-    </g>
-    <g class="ff" transform="translate(778,240)">
-      <ellipse rx="7.5" ry="14" fill="#FFE033" transform="rotate(12)  translate(0,-9.5)"/>
-      <ellipse rx="7.5" ry="14" fill="#FFE033" transform="rotate(102) translate(0,-9.5)"/>
-      <ellipse rx="7.5" ry="14" fill="#FFE033" transform="rotate(192) translate(0,-9.5)"/>
-      <ellipse rx="7.5" ry="14" fill="#FFE033" transform="rotate(282) translate(0,-9.5)"/>
-      <circle r="5" fill="#FF8F00"/>
-    </g>
-    <g class="ff" transform="translate(742,244)">
-      <ellipse rx="7" ry="13" fill="#FFD700" transform="rotate(-5)  translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFD700" transform="rotate(85)  translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFD700" transform="rotate(175) translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFD700" transform="rotate(265) translate(0,-9)"/>
-      <circle r="4.5" fill="#FFB300"/>
-    </g>
-    <g class="ff" transform="translate(722,248)">
-      <ellipse rx="7" ry="13" fill="#FFE500" transform="rotate(15)  translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFE500" transform="rotate(105) translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFE500" transform="rotate(195) translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFE500" transform="rotate(285) translate(0,-9)"/>
-      <circle r="4.5" fill="#FFA000"/>
-    </g>
-    <g class="ff" transform="translate(756,258)">
-      <ellipse rx="6.5" ry="12" fill="#FFE033" transform="rotate(-20) translate(0,-8.5)"/>
-      <ellipse rx="6.5" ry="12" fill="#FFE033" transform="rotate(70)  translate(0,-8.5)"/>
-      <ellipse rx="6.5" ry="12" fill="#FFE033" transform="rotate(160) translate(0,-8.5)"/>
-      <ellipse rx="6.5" ry="12" fill="#FFE033" transform="rotate(250) translate(0,-8.5)"/>
-      <circle r="4" fill="#FF8F00"/>
-    </g>
-    <g class="ff" transform="translate(800,264)">
-      <ellipse rx="7" ry="13" fill="#FFD700" transform="rotate(8)   translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFD700" transform="rotate(98)  translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFD700" transform="rotate(188) translate(0,-9)"/>
-      <ellipse rx="7" ry="13" fill="#FFD700" transform="rotate(278) translate(0,-9)"/>
-      <circle r="4.5" fill="#FFB300"/>
-    </g>
-  </g>
-
-  <!-- 단계 레이블 (SVG 내 텍스트) -->
-  <text id="stageText"
-    x="480" y="170"
-    text-anchor="middle"
-    font-size="20"
-    font-weight="bold"
-    fill="#5D4037"
-    font-family="'Malgun Gothic', Arial, sans-serif">
-    🌱 새싹이 돋아나고 있어요...
-  </text>
-</svg>
+  <!-- 단계 이모지: 가운데 매우 크게 -->
+  <span class="stage-emoji float" id="stageEmoji">🌱</span>
 </div>
 
 <!-- ─── 진행률 바 ─── -->
@@ -799,12 +342,12 @@ body {
 
 <!-- ─── 모둠 카드 ─── -->
 <div class="groups-wrap">
-  <div class="group-card" id="gc1"><div class="gname">🌿 1모둠</div><div class="gcount" id="g1">0</div><div class="gunit">번</div></div>
-  <div class="group-card" id="gc2"><div class="gname">🌿 2모둠</div><div class="gcount" id="g2">0</div><div class="gunit">번</div></div>
-  <div class="group-card" id="gc3"><div class="gname">🌿 3모둠</div><div class="gcount" id="g3">0</div><div class="gunit">번</div></div>
-  <div class="group-card" id="gc4"><div class="gname">🌿 4모둠</div><div class="gcount" id="g4">0</div><div class="gunit">번</div></div>
-  <div class="group-card" id="gc5"><div class="gname">🌿 5모둠</div><div class="gcount" id="g5">0</div><div class="gunit">번</div></div>
-  <div class="group-card" id="gc6"><div class="gname">🌿 6모둠</div><div class="gcount" id="g6">0</div><div class="gunit">번</div></div>
+  <div class="group-card" id="gc1"><div class="gname">💧 1모둠</div><div class="gcount" id="g1">0</div><div class="gunit">번</div></div>
+  <div class="group-card" id="gc2"><div class="gname">💧 2모둠</div><div class="gcount" id="g2">0</div><div class="gunit">번</div></div>
+  <div class="group-card" id="gc3"><div class="gname">💧 3모둠</div><div class="gcount" id="g3">0</div><div class="gunit">번</div></div>
+  <div class="group-card" id="gc4"><div class="gname">💧 4모둠</div><div class="gcount" id="g4">0</div><div class="gunit">번</div></div>
+  <div class="group-card" id="gc5"><div class="gname">💧 5모둠</div><div class="gcount" id="g5">0</div><div class="gunit">번</div></div>
+  <div class="group-card" id="gc6"><div class="gname">💧 6모둠</div><div class="gcount" id="g6">0</div><div class="gunit">번</div></div>
 </div>
 
 <!-- ─── 설정 패널 ─── -->
@@ -826,38 +369,37 @@ body {
   <div class="cel-sub">화면을 탭하면 닫혀요 ✨</div>
 </div>
 
-<!-- ─── Firebase SDK ─── -->
+<!-- ─── Firebase ─── -->
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <script src="firebase-config.js"></script>
 
 <script>
-// ═══════════════════════════════════════
+// ══════════════════════════════════════
 // 1) Firebase 초기화
-// ═══════════════════════════════════════
+// ══════════════════════════════════════
 firebase.initializeApp(firebaseConfig);
 const db         = firebase.database();
 const sessionRef = db.ref('session');
 
-// ═══════════════════════════════════════
-// 2) 꽃 관련 상수 & 상태
-// ═══════════════════════════════════════
-const TOTAL_FLOWERS  = document.querySelectorAll('.ff').length; // 42
-let   celebShown     = false;
-let   prevCounts     = [0,0,0,0,0,0];
-
-// 단계 정의
+// ══════════════════════════════════════
+// 2) 단계 정의 (이모지 + 텍스트만)
+// ══════════════════════════════════════
 const STAGES = [
-  { max: 0.20, msg: '🌱 새싹이 돋아나고 있어요...' },
-  { max: 0.40, msg: '🌿 줄기가 쑥쑥 자라나요!' },
-  { max: 0.70, msg: '🌼 꽃봉오리가 맺혔어요!' },
-  { max: 0.99, msg: '🌸 개나리꽃이 피어나요~' },
-  { max: 1.00, msg: '🌼🌼 개나리꽃이 활짝 피었어요! 🌼🌼' },
+  { max: 0.20, emoji: '🌱', text: '새싹이 돋아나고 있어요...' },
+  { max: 0.40, emoji: '🌿', text: '줄기가 쑥쑥 자라나요!' },
+  { max: 0.70, emoji: '🌼', text: '꽃봉오리가 맺혔어요!' },
+  { max: 0.99, emoji: '🌸', text: '개나리꽃이 피어나요~' },
+  { max: 1.00, emoji: '🌻', text: '개나리꽃이 활짝 피었어요! 🎉' },
 ];
 
-// ═══════════════════════════════════════
+let celebShown = false;
+let prevCounts = [0, 0, 0, 0, 0, 0];
+let prevEmoji  = '';
+
+// ══════════════════════════════════════
 // 3) Firebase 실시간 리스너
-// ═══════════════════════════════════════
+// ══════════════════════════════════════
 sessionRef.on('value', (snap) => {
   const data = snap.val();
   if (!data) return;
@@ -865,71 +407,77 @@ sessionRef.on('value', (snap) => {
   const goal   = data.goal   || 60;
   const groups = data.groups || {};
 
-  // 목표값 입력란 동기화
   document.getElementById('goalInput').value = goal;
 
-  // 각 모둠 카운트
   let total = 0;
   for (let i = 1; i <= 6; i++) {
-    const g     = groups[`group${i}`] || {};
-    const count = g.count || 0;
+    const count = (groups[`group${i}`] || {}).count || 0;
     total += count;
-
     document.getElementById(`g${i}`).textContent = count;
 
-    // 새 탭이 들어오면 카드 펄스 효과
-    if (count > prevCounts[i-1]) {
+    if (count > prevCounts[i - 1]) {
       const card = document.getElementById(`gc${i}`);
       card.classList.remove('active-pulse');
       void card.offsetWidth;
       card.classList.add('active-pulse');
     }
-    prevCounts[i-1] = count;
+    prevCounts[i - 1] = count;
   }
 
-  // 꽃 & UI 업데이트
-  updateGarden(total, goal);
+  updateDisplay(total, goal);
 });
 
-// ═══════════════════════════════════════
-// 4) 정원 UI 업데이트
-// ═══════════════════════════════════════
-function updateGarden(total, goal) {
-  const pct     = Math.min(total / goal, 1);
-  const pctInt  = Math.round(pct * 100);
-  const toShow  = Math.round(pct * TOTAL_FLOWERS);
-
-  // 꽃 개수 조절
-  document.querySelectorAll('.ff').forEach((el, i) => {
-    if (i < toShow) el.classList.add('bloomed');
-    else            el.classList.remove('bloomed');
-  });
+// ══════════════════════════════════════
+// 4) 화면 업데이트
+// ══════════════════════════════════════
+function updateDisplay(total, goal) {
+  const pct    = Math.min(total / goal, 1);
+  const pctInt = Math.round(pct * 100);
 
   // 진행률 바
-  document.getElementById('progressFill').style.width    = pctInt + '%';
-  document.getElementById('progressFill').textContent    = pctInt + '%';
-  document.getElementById('progressText').textContent    = `${total} / ${goal}번 (${pctInt}%)`;
-  document.getElementById('hTotal').textContent          = total;
-  document.getElementById('hGoal').textContent           = goal;
+  document.getElementById('progressFill').style.width = pctInt + '%';
+  document.getElementById('progressFill').textContent = pctInt + '%';
+  document.getElementById('progressText').textContent  = `${total} / ${goal}번 (${pctInt}%)`;
+  document.getElementById('hTotal').textContent = total;
+  document.getElementById('hGoal').textContent  = goal;
 
-  // 단계 레이블
-  let msg = STAGES[STAGES.length - 1].msg;
+  // 현재 단계 찾기
+  let stage = STAGES[STAGES.length - 1];
   for (const s of STAGES) {
-    if (pct <= s.max) { msg = s.msg; break; }
+    if (pct <= s.max) { stage = s; break; }
   }
-  document.getElementById('stageText').textContent = msg;
 
-  // 축하
+  // 텍스트 업데이트
+  document.getElementById('stageText').textContent = stage.text;
+
+  // 이모지 업데이트 (단계가 바뀔 때만 팝 애니메이션)
+  const emojiEl = document.getElementById('stageEmoji');
+  if (stage.emoji !== prevEmoji) {
+    emojiEl.classList.remove('float', 'pop');
+    void emojiEl.offsetWidth;               // reflow
+    emojiEl.textContent = stage.emoji;
+    emojiEl.classList.add('pop');
+
+    // 팝 끝나면 다시 두둥실 float
+    emojiEl.addEventListener('animationend', () => {
+      emojiEl.classList.remove('pop');
+      emojiEl.classList.add('float');
+    }, { once: true });
+
+    prevEmoji = stage.emoji;
+  }
+
+  // 목표 달성 축하
   if (pct >= 1 && !celebShown) {
     celebShown = true;
-    setTimeout(showCelebration, 700);
+    setTimeout(showCelebration, 600);
   }
   if (pct < 1) celebShown = false;
 }
 
-// ═══════════════════════════════════════
+// ══════════════════════════════════════
 // 5) 교사 제어 버튼
-// ═══════════════════════════════════════
+// ══════════════════════════════════════
 function setGoal() {
   const g = parseInt(document.getElementById('goalInput').value);
   if (!g || g < 1) { alert('올바른 목표 횟수를 입력해 주세요!'); return; }
@@ -939,7 +487,7 @@ function setGoal() {
 
 function resetSession() {
   if (!confirm('모든 집계를 0으로 초기화할까요?')) return;
-  const g      = parseInt(document.getElementById('goalInput').value) || 60;
+  const g = parseInt(document.getElementById('goalInput').value) || 60;
   const groups = {};
   for (let i = 1; i <= 6; i++) groups[`group${i}`] = { count: 0, lastTap: 0 };
   sessionRef.set({ goal: g, isActive: false, groups });
@@ -953,24 +501,23 @@ function startSession() {
   sessionRef.once('value', (snap) => {
     const data = snap.val();
     if (!data || !data.groups) {
-      // 처음 시작 — 초기 데이터 세팅
       const groups = {};
       for (let i = 1; i <= 6; i++) groups[`group${i}`] = { count: 0, lastTap: 0 };
       sessionRef.set({ goal: g, isActive: true, groups });
     } else {
       sessionRef.update({ isActive: true, goal: g });
     }
-    alert(`수업을 시작했어요! 🌿\n각 모둠 탭에서 student.html?group=번호 로 접속하면 됩니다.`);
+    alert('수업을 시작했어요! 🌿\nstudent.html?group=번호 로 접속하면 됩니다.');
   });
 }
 
-// ═══════════════════════════════════════
+// ══════════════════════════════════════
 // 6) 축하 효과
-// ═══════════════════════════════════════
+// ══════════════════════════════════════
 function showCelebration() {
   document.getElementById('celebration').classList.add('show');
-  for (let i = 0; i < 60; i++) {
-    setTimeout(() => spawnPetal(), i * 80);
+  for (let i = 0; i < 80; i++) {
+    setTimeout(spawnPetal, i * 55);
   }
 }
 
@@ -979,19 +526,19 @@ function closeCelebration() {
 }
 
 function spawnPetal() {
-  const p     = document.createElement('div');
-  p.className = 'petal';
-  const colors = ['#FFE033','#FFD700','#FFF176','#FFB300','#FFCA28','#FFF59D'];
-  const size   = 8 + Math.random() * 10;
-  p.style.width            = size + 'px';
-  p.style.height           = size + 'px';
-  p.style.left             = Math.random() * 100 + 'vw';
-  p.style.background       = colors[Math.floor(Math.random() * colors.length)];
-  p.style.setProperty('--dur', (2.5 + Math.random() * 2) + 's');
+  const p      = document.createElement('div');
+  p.className  = 'petal';
+  const colors = ['#FFE033','#FFD700','#FFF176','#FFB300','#FFCA28','#FFE57F'];
+  const size   = 8 + Math.random() * 14;
+  p.style.width      = size + 'px';
+  p.style.height     = size + 'px';
+  p.style.left       = Math.random() * 100 + 'vw';
+  p.style.background = colors[Math.floor(Math.random() * colors.length)];
+  p.style.setProperty('--dur', (2 + Math.random() * 2.5) + 's');
   p.style.setProperty('--rot', (Math.random() * 720 - 360) + 'deg');
-  p.style.animationDelay   = Math.random() * 0.5 + 's';
+  p.style.animationDelay = Math.random() * 0.3 + 's';
   document.body.appendChild(p);
-  setTimeout(() => p.remove(), 5000);
+  setTimeout(() => p.remove(), 5500);
 }
 </script>
 </body>
