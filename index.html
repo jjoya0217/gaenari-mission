@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌼 개나리 꽃피우기</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Round+Square:wght@400;700;800&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Nanum Round Square', 'Malgun Gothic', sans-serif;
+  min-height: 100vh;
+  background: linear-gradient(175deg, #87CEEB 0%, #C5E8FF 50%, #88CC66 50%, #5DAA50 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* 배경 구름 */
+.bg-cloud {
+  position: fixed;
+  background: rgba(255,255,255,0.85);
+  border-radius: 50px;
+  pointer-events: none;
+}
+.bg-cloud::before, .bg-cloud::after {
+  content: '';
+  position: absolute;
+  background: rgba(255,255,255,0.85);
+  border-radius: 50%;
+}
+.c1 { width:120px; height:45px; top:60px; left:-30px; animation: drift1 22s linear infinite; }
+.c1::before { width:60px; height:60px; top:-28px; left:15px; }
+.c1::after  { width:45px; height:45px; top:-22px; left:55px; }
+.c2 { width:100px; height:38px; top:120px; right:-20px; animation: drift2 28s linear infinite; }
+.c2::before { width:50px; height:50px; top:-24px; left:10px; }
+.c2::after  { width:40px; height:40px; top:-18px; left:46px; }
+
+@keyframes drift1 { from{transform:translateX(-200px)} to{transform:translateX(110vw)} }
+@keyframes drift2 { from{transform:translateX(110vw)} to{transform:translateX(-200px)} }
+
+/* 헤더 영역 */
+.hero {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.hero-icon {
+  font-size: 72px;
+  display: block;
+  animation: floatUpDown 3s ease-in-out infinite;
+  margin-bottom: 8px;
+  filter: drop-shadow(0 6px 16px rgba(255,200,0,0.5));
+}
+
+@keyframes floatUpDown {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-12px); }
+}
+
+.hero-title {
+  font-size: 2.6rem;
+  font-weight: 800;
+  color: #5D4037;
+  text-shadow: 2px 3px 8px rgba(255,255,255,0.7);
+  letter-spacing: -1px;
+}
+
+.hero-sub {
+  font-size: 1.1rem;
+  color: #6D4C41;
+  margin-top: 6px;
+  text-shadow: 1px 1px 4px rgba(255,255,255,0.6);
+}
+
+/* 카드 */
+.card {
+  background: rgba(255,255,255,0.94);
+  border-radius: 28px;
+  padding: 24px 28px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.13);
+  margin-bottom: 16px;
+  border: 3px solid #FFE033;
+}
+
+.card-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #5D4037;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 교사 버튼 */
+.btn-teacher {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 18px;
+  background: linear-gradient(135deg, #FFB300 0%, #FFD740 100%);
+  color: #4E342E;
+  font-size: 1.25rem;
+  font-weight: 800;
+  text-decoration: none;
+  border-radius: 18px;
+  box-shadow: 0 5px 18px rgba(255,179,0,0.45);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.btn-teacher:hover, .btn-teacher:active {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(255,179,0,0.55);
+}
+
+/* 학생 버튼 그리드 */
+.group-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.btn-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 14px 8px;
+  background: linear-gradient(135deg, #4FC3F7 0%, #0288D1 100%);
+  color: white;
+  font-size: 1.05rem;
+  font-weight: 800;
+  text-decoration: none;
+  border-radius: 16px;
+  box-shadow: 0 4px 14px rgba(2,136,209,0.3);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.btn-group:hover, .btn-group:active {
+  transform: translateY(-3px);
+  box-shadow: 0 7px 20px rgba(2,136,209,0.45);
+}
+.btn-group .drop-icon { font-size: 1.5rem; }
+
+/* 봄 안내 텍스트 */
+.spring-msg {
+  font-size: 0.88rem;
+  color: #6D4C41;
+  text-align: center;
+  margin-top: 8px;
+  opacity: 0.8;
+}
+
+/* 바닥 꽃 장식 */
+.ground-flowers {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 55px;
+  pointer-events: none;
+}
+</style>
+</head>
+<body>
+
+<!-- 배경 구름 -->
+<div class="bg-cloud c1"></div>
+<div class="bg-cloud c2"></div>
+
+<!-- 히어로 영역 -->
+<div class="hero">
+  <span class="hero-icon">🌼</span>
+  <div class="hero-title">개나리 꽃피우기</div>
+  <div class="hero-sub">미션을 완료하고 함께 꽃을 피워요! 🌱</div>
+</div>
+
+<!-- 교사 카드 -->
+<div class="card">
+  <div class="card-title">👩‍🏫 선생님 화면</div>
+  <a href="teacher.html" class="btn-teacher">
+    🌼 교사 대시보드 열기
+  </a>
+</div>
+
+<!-- 학생 카드 -->
+<div class="card">
+  <div class="card-title">💧 학생 화면 — 모둠을 선택하세요</div>
+  <div class="group-grid">
+    <a href="student.html?group=1" class="btn-group"><span class="drop-icon">💧</span>1모둠</a>
+    <a href="student.html?group=2" class="btn-group"><span class="drop-icon">💧</span>2모둠</a>
+    <a href="student.html?group=3" class="btn-group"><span class="drop-icon">💧</span>3모둠</a>
+    <a href="student.html?group=4" class="btn-group"><span class="drop-icon">💧</span>4모둠</a>
+    <a href="student.html?group=5" class="btn-group"><span class="drop-icon">💧</span>5모둠</a>
+    <a href="student.html?group=6" class="btn-group"><span class="drop-icon">💧</span>6모둠</a>
+  </div>
+  <div class="spring-msg">각 모둠 탭에서 해당 모둠 번호를 선택하여 접속하세요 🌸</div>
+</div>
+
+</body>
+</html>
