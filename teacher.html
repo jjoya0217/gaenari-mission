@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🌼 개나리 꽃피우기 - 교사 대시보드</title>
+<title>🌼 꽃피우기 - 교사 대시보드</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Nanum+Round+Square:wght@400;700;800&display=swap');
 
@@ -314,7 +314,7 @@ body {
 
 <!-- ─── 헤더 ─── -->
 <div class="header">
-  <h1>🌼 개나리 꽃피우기</h1>
+  <h1>🌼 꽃피우기</h1>
   <div class="header-stat">
     목표 <span id="hGoal">60</span>번 &nbsp;|&nbsp; 현재 <span id="hTotal">0</span>번
   </div>
@@ -332,7 +332,7 @@ body {
 <!-- ─── 진행률 바 ─── -->
 <div class="progress-wrap">
   <div class="progress-header">
-    <span>🌼 개나리꽃 피우기 진행률</span>
+    <span>🌼 꽃 피우기 진행률</span>
     <span id="progressText">0 / 60번 (0%)</span>
   </div>
   <div class="progress-bg">
@@ -387,10 +387,10 @@ const sessionRef = db.ref('session');
 // ══════════════════════════════════════
 const STAGES = [
   { max: 0.20, emoji: '🌱', text: '새싹이 돋아나고 있어요...' },
-  { max: 0.40, emoji: '🌿', text: '줄기가 쑥쑥 자라나요!' },
-  { max: 0.70, emoji: '🌼', text: '꽃봉오리가 맺혔어요!' },
-  { max: 0.99, emoji: '🌸', text: '꽃이 피어나요~' },
-  { max: 1.00, emoji: '🌻', text: '이 활짝 피었어요! 🎉' },
+  { max: 0.40, emoji: '🪴', text: '줄기가 쑥쑥 자라나요!' },
+  { max: 0.70, emoji: '🌿', text: '잎이 자라고 있어요!' },
+  { max: 0.99, emoji: '🏵︎', text: '꽃이 피어나요~' },
+  { max: 1.00, emoji: '🌸', text: '꽃이 활짝 피었어요! 🎉' },
 ];
 
 let celebShown = false;
