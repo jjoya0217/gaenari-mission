@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🌸 꽃피우기 - 교사 대시보드</title>
+<title>🌼 개나리 꽃피우기 - 교사 대시보드</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Nanum+Round+Square:wght@400;700;800&display=swap');
 
@@ -81,12 +81,13 @@ body {
   min-height: 3rem;
 }
 
-/* 단계 이모지 — 중앙에 매우 크게 */
+/* 단계 이미지 — 중앙에 매우 크게 */
 .stage-emoji {
-  font-size: clamp(160px, 30vw, 280px);
-  line-height: 1;
-  text-align: center;
+  width: clamp(160px, 30vw, 280px);
+  height: clamp(160px, 30vw, 280px);
+  object-fit: contain;
   display: block;
+  margin: 0 auto;
   filter: drop-shadow(0 12px 32px rgba(0,0,0,0.22))
           drop-shadow(0 0 60px rgba(255,220,0,0.35));
   user-select: none;
@@ -258,7 +259,7 @@ body {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(255,228,0,0.8);
+  background: rgba(255,228,0,0.82);
   backdrop-filter: blur(8px);
   z-index: 200;
   flex-direction: column;
@@ -287,6 +288,7 @@ body {
   text-align: center;
   text-shadow: 2px 4px 12px rgba(255,255,255,0.8);
   line-height: 1.3;
+  z-index: 1;
 }
 
 .cel-sub {
@@ -295,18 +297,24 @@ body {
   margin-top: 22px;
   font-weight: 700;
   opacity: 0.75;
+  z-index: 1;
 }
 
-/* 꽃잎 파티클 */
-.petal {
+/* ─── 꽃 파티클 (화면 전체 흩날림) ─── */
+.flower-particle {
   position: fixed;
-  border-radius: 50% 0 50% 0;
   pointer-events: none;
-  animation: petalFall var(--dur) linear forwards;
+  font-size: var(--fsize);
+  left: var(--left);
+  top: -60px;
+  z-index: 400;
+  animation: flowerFall var(--dur) var(--delay) ease-in forwards;
 }
-@keyframes petalFall {
-  0%   { transform: translateY(-40px) rotate(0deg);       opacity: 1; }
-  100% { transform: translateY(110vh) rotate(var(--rot)); opacity: 0; }
+@keyframes flowerFall {
+  0%   { transform: translateY(0)     translateX(0)          rotate(0deg)         scale(var(--s)); opacity: 1; }
+  30%  { transform: translateY(30vh)  translateX(var(--sx))  rotate(120deg)        scale(var(--s)); }
+  60%  { transform: translateY(65vh)  translateX(calc(var(--sx)*-1.2)) rotate(260deg) scale(var(--s)); }
+  100% { transform: translateY(115vh) translateX(var(--sx))  rotate(var(--rot))   scale(var(--s)); opacity: 0; }
 }
 </style>
 </head>
@@ -314,7 +322,7 @@ body {
 
 <!-- ─── 헤더 ─── -->
 <div class="header">
-  <h1>🌸 꽃피우기</h1>
+  <h1>🌼 개나리 꽃피우기</h1>
   <div class="header-stat">
     목표 <span id="hGoal">60</span>번 &nbsp;|&nbsp; 현재 <span id="hTotal">0</span>번
   </div>
@@ -325,14 +333,14 @@ body {
   <!-- 단계 텍스트: 가운데 상단 -->
   <div class="stage-text" id="stageText">새싹이 돋아나고 있어요...</div>
 
-  <!-- 단계 이모지: 가운데 매우 크게 -->
-  <span class="stage-emoji float" id="stageEmoji">🌱</span>
+  <!-- 단계 이미지: 가운데 매우 크게 -->
+  <img class="stage-emoji float" id="stageEmoji" src="1.png" alt="단계 이미지">
 </div>
 
 <!-- ─── 진행률 바 ─── -->
 <div class="progress-wrap">
   <div class="progress-header">
-    <span>🌸 꽃 피우기 진행률</span>
+    <span>🌼 개나리꽃 피우기 진행률</span>
     <span id="progressText">0 / 60번 (0%)</span>
   </div>
   <div class="progress-bg">
@@ -364,8 +372,8 @@ body {
 
 <!-- ─── 축하 오버레이 ─── -->
 <div id="celebration" onclick="closeCelebration()">
-  <div class="cel-emoji">🌸</div>
-  <div class="cel-msg">우리 모두 함께<br>꽃을 피웠어요!</div>
+  <div class="cel-emoji">🌼</div>
+  <div class="cel-msg">우리 모두 함께<br>개나리꽃을 피웠어요!</div>
   <div class="cel-sub">화면을 탭하면 닫혀요 ✨</div>
 </div>
 
@@ -383,14 +391,16 @@ const db         = firebase.database();
 const sessionRef = db.ref('session');
 
 // ══════════════════════════════════════
-// 2) 단계 정의 (이모지 + 텍스트만)
+// 2) 단계 정의 — 이미지 파일명 + 텍스트
+// ★ 이미지 파일을 바꾸고 싶으면 img: 뒤 파일명만 수정하세요!
 // ══════════════════════════════════════
 const STAGES = [
-  { max: 0.20, emoji: '🌱', text: '새싹이 돋아나고 있어요...' },
-  { max: 0.40, emoji: '🪴', text: '줄기가 쑥쑥 자라나요!' },
-  { max: 0.70, emoji: '🌿', text: '잎이 자라고 있어요!' },
-  { max: 0.99, emoji: '🏵︎', text: '꽃이 피어나요~' },
-  { max: 1.00, emoji: '🌸', text: '꽃이 활짝 피었어요! 🎉' },
+  { max: 0.01, img: '1.png', text: '시작해볼까요? 물을 주세요! 💧' },
+  { max: 0.30, img: '2.png', text: '새싹이 돋아나고 있어요...' },
+  { max: 0.55, img: '3.png', text: '줄기가 쑥쑥 자라나요!' },
+  { max: 0.75, img: '4.png', text: '꽃봉오리가 맺혔어요!' },
+  { max: 0.99, img: '5.png', text: '개나리꽃이 피어나요~' },
+  { max: 1.00, img: '6.png', text: '개나리꽃이 활짝 피었어요! 🎉' },
 ];
 
 let celebShown = false;
@@ -450,21 +460,21 @@ function updateDisplay(total, goal) {
   // 텍스트 업데이트
   document.getElementById('stageText').textContent = stage.text;
 
-  // 이모지 업데이트 (단계가 바뀔 때만 팝 애니메이션)
-  const emojiEl = document.getElementById('stageEmoji');
-  if (stage.emoji !== prevEmoji) {
-    emojiEl.classList.remove('float', 'pop');
-    void emojiEl.offsetWidth;               // reflow
-    emojiEl.textContent = stage.emoji;
-    emojiEl.classList.add('pop');
+  // 이미지 업데이트 (단계가 바뀔 때만 팝 애니메이션)
+  const imgEl = document.getElementById('stageEmoji');
+  if (stage.img !== prevEmoji) {
+    imgEl.classList.remove('float', 'pop');
+    void imgEl.offsetWidth;               // reflow
+    imgEl.src = stage.img;
+    imgEl.classList.add('pop');
 
     // 팝 끝나면 다시 두둥실 float
-    emojiEl.addEventListener('animationend', () => {
-      emojiEl.classList.remove('pop');
-      emojiEl.classList.add('float');
+    imgEl.addEventListener('animationend', () => {
+      imgEl.classList.remove('pop');
+      imgEl.classList.add('float');
     }, { once: true });
 
-    prevEmoji = stage.emoji;
+    prevEmoji = stage.img;
   }
 
   // 목표 달성 축하
@@ -512,33 +522,55 @@ function startSession() {
 }
 
 // ══════════════════════════════════════
-// 6) 축하 효과
+// 6) 축하 효과 — 화면 전체 꽃 쏟아짐
 // ══════════════════════════════════════
 function showCelebration() {
   document.getElementById('celebration').classList.add('show');
-  for (let i = 0; i < 80; i++) {
-    setTimeout(spawnPetal, i * 55);
+
+  // 1차 폭발 (즉시, 120개)
+  for (let i = 0; i < 120; i++) {
+    setTimeout(spawnFlower, i * 30);
   }
+  // 2차 폭발 (4초 후, 80개 추가)
+  setTimeout(() => {
+    for (let i = 0; i < 80; i++) setTimeout(spawnFlower, i * 40);
+  }, 4000);
+  // 3차 폭발 (8초 후, 60개 추가)
+  setTimeout(() => {
+    for (let i = 0; i < 60; i++) setTimeout(spawnFlower, i * 50);
+  }, 8000);
 }
 
 function closeCelebration() {
   document.getElementById('celebration').classList.remove('show');
+  // 남은 파티클 정리
+  document.querySelectorAll('.flower-particle').forEach(el => el.remove());
 }
 
-function spawnPetal() {
-  const p      = document.createElement('div');
-  p.className  = 'petal';
-  const colors = ['#FFE033','#FFD700','#FFF176','#FFB300','#FFCA28','#FFE57F'];
-  const size   = 8 + Math.random() * 14;
-  p.style.width      = size + 'px';
-  p.style.height     = size + 'px';
-  p.style.left       = Math.random() * 100 + 'vw';
-  p.style.background = colors[Math.floor(Math.random() * colors.length)];
-  p.style.setProperty('--dur', (2 + Math.random() * 2.5) + 's');
-  p.style.setProperty('--rot', (Math.random() * 720 - 360) + 'deg');
-  p.style.animationDelay = Math.random() * 0.3 + 's';
-  document.body.appendChild(p);
-  setTimeout(() => p.remove(), 5500);
+function spawnFlower() {
+  const flowers = ['🌼','🌸','🌺','🌻','🌷','💛','✨','🎉','💐'];
+  const f       = document.createElement('div');
+  f.className   = 'flower-particle';
+
+  const size   = 20 + Math.random() * 40;   // 20~60px
+  const left   = Math.random() * 100;        // 0~100vw
+  const dur    = 3 + Math.random() * 4;      // 3~7초
+  const delay  = Math.random() * 1.5;        // 0~1.5초 딜레이
+  const scale  = 0.6 + Math.random() * 1.2;  // 0.6~1.8
+  const swayX  = (Math.random() - 0.5) * 200; // -100~100px 좌우 흔들림
+  const rot    = (Math.random() - 0.5) * 720; // 회전각
+
+  f.textContent = flowers[Math.floor(Math.random() * flowers.length)];
+  f.style.setProperty('--fsize', size + 'px');
+  f.style.setProperty('--left',  left + 'vw');
+  f.style.setProperty('--dur',   dur + 's');
+  f.style.setProperty('--delay', delay + 's');
+  f.style.setProperty('--s',     scale);
+  f.style.setProperty('--sx',    swayX + 'px');
+  f.style.setProperty('--rot',   rot + 'deg');
+
+  document.body.appendChild(f);
+  setTimeout(() => f.remove(), (dur + delay + 0.5) * 1000);
 }
 </script>
 </body>
